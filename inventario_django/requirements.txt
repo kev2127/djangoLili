@@ -1,0 +1,9 @@
+# famework principal (manetnemos 5.0 por compatibilidad con mariadb y django 5.0)
+Django>=5.0,<5.1
+# Base de datos 
+mysqlclient>=2.2.4
+# generar pdf
+reportlab>=4.0.0
+weasyprint>=61.0
+# Para manejo de variable de entrono para la seguridad de credenciales 
+python-dotenv>=1.0.0
