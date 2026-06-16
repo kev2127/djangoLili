@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,7 +78,7 @@ WSGI_APPLICATION = 'dcrm.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cliente',
+        'NAME': 'cliente_db',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
@@ -121,8 +122,31 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+     os.path.join(BASE_DIR, 'website', 'templates','static'),
+]
+   
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DEBUG =True 
+ALLOWED_HOSTS=[
+    '127.0.0.1',
+    'localhost',
+    '.loca.lt',
+
+]
+CSRF_TRUSTED_ORIGINS =[
+    'https://.loca.lt',
+]
+SESION_COOKIE_SECURE = True 
+CSRF_COOKIE_SECURE = True 
+CSRF_COOKIE_HTTPONLY = True 
+CSRF_COOKIE_SAMESITE = 'lax'
+
+#seguridad al protocolo HTTPS 
+
+#SECURE_SSL_REDIRECT =True

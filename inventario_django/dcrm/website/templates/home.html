@@ -1,4 +1,94 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h1>Hola futbol</h1>
+<div class="py-4">
+  {% if user.is_authenticated %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Registros de la Base de Datos</h2>
+    <a href="{% url 'add_record' %}" class="btn btn-primary">➕ Agregar Registro</a>
+  </div>
+
+  {% if records %}
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped align-middle mb-0" style="min-width: 1100px;">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col">Dirección</th>
+            <th scope="col">Ciudad</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Código Postal</th>
+            <th scope="col">Creado el</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+          <tr>
+            <td><a href="{% url 'record' record.id %}" class="fw-bold text-decoration-none">{{ record.id }}</a></td>
+            <td>{{ record.first_name }} {{ record.last_name }}</td>
+            <td>{{ record.email }}</td>
+            <td>{{ record.phone }}</td>
+            <td>{{ record.address }}</td>
+            <td>{{ record.city }}</td>
+            <td>{{ record.state }}</td>
+            <td>{{ record.zipcode }}</td>
+            <td>{{ record.created_at|date:"d/m/Y H:i" }}</td>
+            <td class="text-center">
+              <div class="btn-group" role="group">
+                <a href="{% url 'record' record.id %}" class="btn btn-sm btn-outline-info">Ver</a>
+                <a href="{% url 'update_record' record.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
+                <a href="{% url 'delete_record' record.id %}" class="btn btn-sm btn-outline-danger"
+                  onclick="return confirm('¿Estás seguro de eliminar este registro?')">Eliminar</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info text-center py-5 shadow-sm" role="alert">
+    <h4 class="alert-heading mb-3">No hay registros aún</h4>
+    <p class="mb-4">¡Sé el primero en agregar un registro al sistema!</p>
+    <a href="{% url 'add_record' %}" class="btn btn-primary btn-lg">Agregar Primer Registro</a>
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="row justify-content-center py-5">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow">
+        <div class="card-body p-4">
+          <h2 class="welcome-header text-center mb-3">Iniciar Sesión</h2>
+          <p class="text-center text-muted mb-4">Ingresa tus credenciales para continuar</p>
+
+          <form method="POST" action="{% url 'home' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="username" class="form-label">Usuario</label>
+              <input type="text" class="form-control" name="username" placeholder="Tu usuario" required />
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" name="password" placeholder="••••••••" required />
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">Ingresar al Sistema</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
 {% endblock %}
