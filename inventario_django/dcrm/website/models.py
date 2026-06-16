@@ -14,3 +14,12 @@ class Record(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+class Appointment(models.Model):
+    record = models.ForeignKey(Record, on_delete=models.CASCADE, related_name='appointments')
+    fecha = models.DateField()
+    hora = models.TimeField()
+    descripcion = models.TextField(blank=True)
+    creado_el = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.record} - {self.fecha} {self.hora}"

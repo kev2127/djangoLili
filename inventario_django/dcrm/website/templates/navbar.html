@@ -11,19 +11,38 @@
 
         {% if user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'add_record' %}">➕ Agregar Registro</a>
+          <a class="nav-link" href="{% url 'add_record' %}"><button type="button" class="btn btn-primary">➕
+              Agregar
+              Registro</button></a>
         </li>
+        <li>
+          <a href="{% url 'agenda' %}" class="nav-link"> <button type="button" class="btn btn-primary">📅
+              Agenda</button></a>
+        </li>
+
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
+          <a class="nav-link" href="{% url 'home' %}"> <button type="button" class="btn btn-primary">Lista de
+              regisros </button></a>
         </li>
+
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}">Iniciar Sesión</a>
+          <a class="nav-link" href="{% url 'home' %}"><button type="button" class="btn btn-primary">Inicio de
+              sesion</button></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'register' %}">📔 Registrar</a>
+          <a class="nav-link" href="{% url 'register' %}"><button type="button"
+              class="btn btn-primary">Registro</button></a>
         </li>
+
         {% endif %}
+      </ul>
+      <!-- Cerrar sesión a la derecha -->
+      {% if user.is_authenticated %}
+      <a class="nav-link ms-auto" href="{% url 'logout' %}">
+        <button type="button" class="btn btn-danger">Cerrar Sesión</button>
+      </a>
+      {% endif %}
 
       </ul>
 

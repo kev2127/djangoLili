@@ -3,7 +3,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import AddRecordForm, SignUpForm
 from .models import Record
-from django.core.paginator import Paginator 
+from django.core.paginator import Paginator
+from django.contrib.auth.models import User 
+from .models import Record, Appointment
+from .forms import SignUpForm, AppointmentForm
+
 
 
 
@@ -42,16 +46,19 @@ def logout_user(request):
     messages.success(request, "Has cerrado sesión correctamente.")
     return redirect('home')
 def register_user(request):
-    if request.method =='POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "You have Registered!")
-            return redirect('home')
-    else:
-        form = SignUpForm()
-    return render(request, 'register.html', {'form':form})
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Ese usuario ya existe")
+            return redirect('register')
+
+        user = User.objects.create_user(username=username, password=password)
+        messages.success(request, "Usuario registrado correctamente")
+        return redirect('home')
+    
+    return render(request, 'register.html')
         
    
 
@@ -94,6 +101,45 @@ def update_record(request, pk):
     else:
         messages.success(request, "🚫Error del usuario")
         return redirect('home')
+
+def agenda(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "🚫 Debes iniciar sesión")
+        return redirect('home')
+
+    appointments = Appointment.objects.all().order_by('fecha', 'hora')
+    form = AppointmentForm(request.POST or None)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Cita agendada correctamente")
+            return redirect('agenda')
+
+    return render(request, 'agenda.html', {'appointments': appointments, 'form': form})
+
+def delete_appointment(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('home')
+    appointment = Appointment.objects.get(id=pk)
+    appointment.delete()
+    messages.success(request, "Cita eliminada")
+    return redirect('agenda')
+
+def update_appointment(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('home')
+    
+    appointment = Appointment.objects.get(id=pk)
+    form = AppointmentForm(request.POST or None, instance=appointment)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Cita actualizada correctamente")
+            return redirect('agenda')
+    
+    return render(request, 'update_appointment.html', {'form': form})
         
 
     

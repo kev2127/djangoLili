@@ -7,74 +7,45 @@ from django.contrib.auth.models import User # para acceder al modelo de usuario 
 # usando tecnologia  orm
 #from .models import * # para importar todos los modelos definidos en el archivo models.py de la aplicación, lo que permite utilizarlos en la creación de formularios relacionados con esos modelos.
 from .models import Record # para importar el modelo Record definido en el archivo models.py de la aplicación, lo que permite utilizarlo en la creación de formularios relacionados con ese modelo.#tipe ignore
+from .models import Record, Appointment #Para el formulario de citas
 
 
 # formulario de registro de usuarios personalizado que hereda de UserCreationForm
 class SignUpForm(UserCreationForm):
-    email = forms.EmailField(label='', widget=forms.EmailInput(attrs={'placeholder': 'Correo electrónico'})) # campo de correo electrónico adicional para el formulario de registro de usuarios.
+    email = forms.EmailField(label='', widget=forms.EmailInput(attrs={'placeholder': 'Correo electrónico', 'class': 'form-control'}))
+    first_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Nombre', 'class': 'form-control'}))
+    last_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Apellido', 'class': 'form-control'}))
 
-
-    # campos de primer nombre y apellido para el formulario de registro de usuarios.
-    first_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Nombre'})) # campo de primer nombre para el formulario de registro de usuarios.
-    last_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Apellido'})) # campo de apellido para el formulario de registro de usuarios.
     class Meta:
-        # atributos de la clase Meta para configurar el formulario de registro de usuarios.
-        # La clase Meta se utiliza para configurar el formulario, especificando el modelo asociado y los campos que se incluirán en el formulario.
-        model = User # especifica que el modelo asociado a este formulario es el modelo User de Django.
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2') # campos que se incluirán en el formulario de registro de usuarios, incluyendo el nombre de usuario, primer nombre, apellido, correo electrónico y las contraseñas.
-        # los metodos
-        
-        def __init__(self,*args, **kwargs) -> None:
-            # *args y **kwargs son parámetros que permiten pasar un número variable de argumentos posicionales y de palabras clave al método __init__. Esto es útil para permitir flexibilidad en la inicialización del formulario, ya que puede aceptar diferentes conjuntos de argumentos según sea necesario.inicializa el formulario utilizando el constructor de la clase padre UserCreationForm y luego personaliza los atributos de los campos del formulario
-            super(SignUpForm, self).__init__(*args, **kwargs) # llama al constructor de la clase padre para inicializar el formulario.
-            self.fields['username'].widget.attrs['class'] = 'form-control' # personaliza el campo de nombre de usuario agregando la clase CSS 'form-control' para mejorar su apariencia en el formulario.
-            self.fields['username'].widget.attrs['placeholder'] = 'Nombre de usuario' # personaliza el campo de nombre de usuario agregando un marcador de posición para indicar al usuario qué información se espera en ese campo.
-            self.fields['username'].label= '' # personaliza el campo de nombre de usuario eliminando la etiqueta del campo para una apariencia más limpia en el formulario.
-            self.fields['username'].help_text=('<span class="form-text text-muted"><small>Requerido. 150 caracteres o menos. Letras, dígitos y @/./+/-/_ solamente.</small></span>') # personaliza el campo de nombre de usuario agregando un mensaje de ayuda para indicar al usuario los requisitos para el nombre de usuario.
-            self.fields['password1'].widget.attrs['class'] = 'form-control' # personaliza el campo de contraseña 1 agregando la clase CSS 'form-control' para mejorar su apariencia en el formulario.
-            self.fields['password1'].widget.attrs['placeholder'] = 'Contraseña' # personaliza el campo de contraseña 1 agregando un marcador de posición para indicar al usuario qué información se espera en ese campo.
-            self.fields['password1'].label= '' # personaliza el campo de contraseña 1 eliminando la etiqueta del campo para una apariencia más limpia en el formulario.
-            self.fields['password1'].help_text=(
-                
-                '<ul class="form-text text-muted small">'
-                '<li>Tu contraseña no puede ser demasiado similar a tu otra información personal.</li>'
-                '<li>Tu contraseña debe contener al menos 8 caracteres.</li>'
-                '<li>Tu contraseña no puede ser una contraseña común.</li>'
-                '<li>Tu contraseña no puede ser completamente numérica.</li>'
-                '</ul>'
-            ) # personaliza el campo de contraseña 1 agregando un mensaje de ayuda para indicar al usuario los requisitos para la contraseña.
-            #personaliza el campo de contraseña 2
-            self.fields['password2'].widget.attrs['class'] = 'form-control' # personaliza el campo de contraseña 2 agregando la clase CSS 'form-control' para mejorar su apariencia en el formulario.
-            self.fields['password2'].widget.attrs['placeholder'] = 'Confirmar contraseña' # personaliza el campo de contraseña 2 agregando un marcador de posición para indicar al usuario qué información se espera en ese campo.
-            self.fields['password2'].label= '' # personaliza el campo de contraseña 2 eliminando la etiqueta del campo para una apariencia más limpia en el formulario.
-            self.fields['password2'].help_text=(
-                '<span class="form-text text-muted"><small>'
-                'Ingrese la misma contraseña que antes, para verificación.'
-                '</small></span>'
-            ) # personaliza el campo de contraseña 2 agregando un mensaje de ayuda para indicar al usuario los requisitos para la contraseña.
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+
+    # ← __init__ va AQUÍ, fuera de Meta
+    def __init__(self, *args, **kwargs):
+        super(SignUpForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['class'] = 'form-control'
+        self.fields['username'].widget.attrs['placeholder'] = 'Nombre de usuario'
+        self.fields['username'].label = ''
+        self.fields['username'].help_text = '<span class="form-text text-muted"><small>Requerido. 150 caracteres o menos.</small></span>'
+
+        self.fields['password1'].widget.attrs['class'] = 'form-control'
+        self.fields['password1'].widget.attrs['placeholder'] = 'Contraseña'
+        self.fields['password1'].label = ''
+        self.fields['password1'].help_text = (
+            '<ul class="form-text text-muted small">'
+            '<li>Mínimo 8 caracteres.</li>'
+            '<li>No puede ser completamente numérica.</li>'
+            '</ul>'
+        )
+
+        self.fields['password2'].widget.attrs['class'] = 'form-control'
+        self.fields['password2'].widget.attrs['placeholder'] = 'Confirmar contraseña'
+        self.fields['password2'].label = ''
+        self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Ingresa la misma contraseña para verificación.</small></span>'
+ # personaliza el campo de contraseña 2 agregando un mensaje de ayuda para indicar al usuario los requisitos para la contraseña.
 # ------------------ formulario agregar registro ------------------
 # formulario par agregar registro del modelo Records    
-class AddRecordForm(forms.ModelForm):
-    # campo para el primer nombre , requerido , con placerholder y clase css
-    first_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"nombre","class":"forms-control"}), label="")
-    #campos para el apellido , requerido, con placerholder y clase css
-    last_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Apellido","class":"forms-control"}), label="")
-    #campo para el email , requerido, con placerholder y clase css  
-    email = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Correo electrónico","class":"forms-control"}), label="")
-    #campo para el numero de telefono , requerido, con placerholder y clase css
-    phone = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Número de teléfono","class":"forms-control"}), label="")
-    #campo para la direccion , requerido, con placerholder y clase css
-    address = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Dirección","class":"forms-control"}), label="")
-    #campo para el ciudad , requerido, con placerholder y clase css
-    city = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Ciudad","class":"forms-control"}), label="")
-    #campo para el estado , requerido, con placerholder y clase css
-    state = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Estado","class":"forms-control"}), label="")
-    #campo para el codigo postal , requerido, con placerholder y clase css  
-    zipcode = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Código postal","class":"forms-control"}), label="")
-    #define el modelo  asociado y los cmapos requeridos
-    class Meta:
-        model = Record #el formulario se basa en el modelo Record
-        exclude= ('user',) #excluye el campo 'user' del formulario, lo que significa que no se mostrará ni se podrá editar a través de este formulario. Esto es útil cuando el campo 'user' se establece automáticamente en función del usuario autenticado o se maneja de otra manera en la lógica de la aplicación.
+
         from django import forms
 from .models import Record
 
@@ -92,3 +63,28 @@ class AddRecordForm(forms.ModelForm):
             'state':      forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado'}),
             'zipcode':    forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código postal'}),
         }
+
+
+class AppointmentForm(forms.ModelForm):
+    record = forms.ModelChoiceField(
+        queryset=Record.objects.all(),
+        label='',
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    fecha = forms.DateField(
+        label='',
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+    )
+    hora = forms.TimeField(
+        label='',
+        widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'})
+    )
+    descripcion = forms.CharField(
+        label='',
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descripción'})
+    )
+
+    class Meta:
+        model = Appointment
+        fields = ('record', 'fecha', 'hora', 'descripcion')
