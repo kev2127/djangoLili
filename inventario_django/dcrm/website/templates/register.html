@@ -2,24 +2,131 @@
 {% block content %}
 
 <div class="row justify-content-center py-5">
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-8 col-lg-6">
         <div class="card shadow">
             <div class="card-body p-4">
-                <h2 class="welcome-header text-center mb-3">Registro</h2>
+                <h2 class="welcome-header text-center mb-3">Registro de Usuario</h2>
+                <p class="text-center text-muted mb-4">Crea una cuenta en el sistema</p>
+
                 <form method="POST">
                     {% csrf_token %}
 
+                    <!-- Campo de Rol -->
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Username" name="username"
-                            required>
+                        <label class="form-label fw-bold">Seleccione su Rol</label>
+                        {{ form.role }}
+                        {% if form.role.errors %}
+                            <div class="text-danger small">{{ form.role.errors }}</div>
+                        {% endif %}
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="••••••••" name="password"
-                            required>
+
+                    <!-- Campos de Usuario Generales -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nombre de usuario</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small">{{ form.username.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">{{ form.username.help_text|safe }}</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Correo electrónico</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="d-grid gap-2">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nombre</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger small">{{ form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Apellido</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger small">{{ form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Campos específicos de Cliente -->
+                    <div id="client-fields-container">
+                        <hr class="my-4">
+                        <h5 class="text-secondary mb-3">Datos de Cliente / Contacto</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Teléfono</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small">{{ form.phone.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Código Postal</label>
+                                {{ form.zipcode }}
+                                {% if form.zipcode.errors %}
+                                    <div class="text-danger small">{{ form.zipcode.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Dirección</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="text-danger small">{{ form.address.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Ciudad</label>
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                    <div class="text-danger small">{{ form.city.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Estado / Provincia</label>
+                                {{ form.state }}
+                                {% if form.state.errors %}
+                                    <div class="text-danger small">{{ form.state.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+                    <h5 class="text-secondary mb-3">Seguridad</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Contraseña</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="text-danger small">{{ form.password1.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">{{ form.password1.help_text|safe }}</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Confirmar contraseña</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="text-danger small">{{ form.password2.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">{{ form.password2.help_text|safe }}</small>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">Registrarse</button>
                     </div>
                 </form>
@@ -27,5 +134,31 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript para alternar visibilidad de campos de cliente -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const roleSelect = document.getElementById("role-select");
+        const clientFields = document.getElementById("client-fields-container");
+        const clientInputs = clientFields.querySelectorAll(".client-field");
+
+        function toggleFields() {
+            if (roleSelect.value === "Administrador") {
+                clientFields.style.display = "none";
+                clientInputs.forEach(input => {
+                    input.required = false;
+                });
+            } else {
+                clientFields.style.display = "block";
+                clientInputs.forEach(input => {
+                    input.required = true;
+                });
+            }
+        }
+
+        roleSelect.addEventListener("change", toggleFields);
+        toggleFields(); // Ejecutar al cargar la página
+    });
+</script>
 
 {% endblock %}

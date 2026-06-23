@@ -1,6 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+class Profile(models.Model):
+    ROLE_CHOICES = [
+        ('Administrador', 'Administrador'),
+        ('Cliente', 'Cliente'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Cliente')
+
+    def __str__(self):
+        return f"{self.user.username} ({self.role})"
 
 class Record(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='record')
     created_at = models.DateTimeField(auto_now_add=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)

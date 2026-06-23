@@ -3,63 +3,139 @@
 {% block content %}
 <div class="py-4">
   {% if user.is_authenticated %}
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Registros de la Base de Datos</h2>
-    <a href="{% url 'add_record' %}" class="btn btn-primary">➕ Agregar Registro</a>
-  </div>
+    {% if role == 'Administrador' %}
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Registros de la Base de Datos</h2>
+        <a href="{% url 'add_record' %}" class="btn btn-primary">➕ Agregar Registro</a>
+      </div>
 
-  {% if records %}
+      {% if records %}
+      <div class="card shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle mb-0" style="min-width: 1100px;">
+            <thead class="table-dark">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">Dirección</th>
+                <th scope="col">Ciudad</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Código Postal</th>
+                <th scope="col">Creado el</th>
+                <th scope="col" class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in records %}
+              <tr>
+                <td><a href="{% url 'record' record.id %}" class="fw-bold text-decoration-none">{{ record.id }}</a></td>
+                <td>{{ record.first_name }} {{ record.last_name }}</td>
+                <td>{{ record.email }}</td>
+                <td>{{ record.phone }}</td>
+                <td>{{ record.address }}</td>
+                <td>{{ record.city }}</td>
+                <td>{{ record.state }}</td>
+                <td>{{ record.zipcode }}</td>
+                <td>{{ record.created_at|date:"d/m/Y H:i" }}</td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <a href="{% url 'record' record.id %}" class="btn btn-sm btn-outline-info">Ver</a>
+                    <a href="{% url 'update_record' record.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
+                    <a href="{% url 'delete_record' record.id %}" class="btn btn-sm btn-outline-danger"
+                      onclick="return confirm('¿Estás seguro de eliminar este registro?')">Eliminar</a>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% else %}
+      <div class="alert alert-info text-center py-5 shadow-sm" role="alert">
+        <h4 class="alert-heading mb-3">No hay registros aún</h4>
+        <p class="mb-4">¡Sé el primero en agregar un registro al sistema!</p>
+        <a href="{% url 'add_record' %}" class="btn btn-primary btn-lg">Agregar Primer Registro</a>
+      </div>
+      {% endif %}
+    
+    {% else %}
+      <!-- Vista de Cliente -->
+      <div class="row">
+        <div class="col-md-5 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-primary text-white py-3">
+              <h4 class="mb-0">📋 Mi Perfil de Cliente</h4>
+            </div>
+            <div class="card-body p-4">
+              {% if client_record %}
+                <h3 class="welcome-header mb-4">{{ client_record.first_name }} {{ client_record.last_name }}</h3>
+                <p><strong>Correo:</strong> {{ client_record.email }}</p>
+                <p><strong>Teléfono:</strong> {{ client_record.phone }}</p>
+                <p><strong>Dirección:</strong> {{ client_record.address }}</p>
+                <p><strong>Ciudad:</strong> {{ client_record.city }}</p>
+                <p><strong>Estado:</strong> {{ client_record.state }}</p>
+                <p><strong>Código Postal:</strong> {{ client_record.zipcode }}</p>
+                <div class="mt-4">
+                  <a href="{% url 'update_record' client_record.id %}" class="btn btn-primary btn-sm">Editar Mis Datos</a>
+                </div>
+              {% else %}
+                <div class="alert alert-warning">
+                  No hay una ficha de datos vinculada a tu cuenta de cliente. Por favor contacta al administrador.
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
 
-  <div class="card shadow-sm">
-    <div class="table-responsive">
-      <table class="table table-hover table-striped align-middle mb-0" style="min-width: 1100px;">
-        <thead class="table-dark">
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Correo</th>
-            <th scope="col">Teléfono</th>
-            <th scope="col">Dirección</th>
-            <th scope="col">Ciudad</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Código Postal</th>
-            <th scope="col">Creado el</th>
-            <th scope="col" class="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for record in records %}
-          <tr>
-            <td><a href="{% url 'record' record.id %}" class="fw-bold text-decoration-none">{{ record.id }}</a></td>
-            <td>{{ record.first_name }} {{ record.last_name }}</td>
-            <td>{{ record.email }}</td>
-            <td>{{ record.phone }}</td>
-            <td>{{ record.address }}</td>
-            <td>{{ record.city }}</td>
-            <td>{{ record.state }}</td>
-            <td>{{ record.zipcode }}</td>
-            <td>{{ record.created_at|date:"d/m/Y H:i" }}</td>
-            <td class="text-center">
-              <div class="btn-group" role="group">
-                <a href="{% url 'record' record.id %}" class="btn btn-sm btn-outline-info">Ver</a>
-                <a href="{% url 'update_record' record.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
-                <a href="{% url 'delete_record' record.id %}" class="btn btn-sm btn-outline-danger"
-                  onclick="return confirm('¿Estás seguro de eliminar este registro?')">Eliminar</a>
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  {% else %}
-  <div class="alert alert-info text-center py-5 shadow-sm" role="alert">
-    <h4 class="alert-heading mb-3">No hay registros aún</h4>
-    <p class="mb-4">¡Sé el primero en agregar un registro al sistema!</p>
-    <a href="{% url 'add_record' %}" class="btn btn-primary btn-lg">Agregar Primer Registro</a>
-  </div>
-  {% endif %}
+        <div class="col-md-7 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+              <h4 class="mb-0">📅 Mis Citas Agendadas</h4>
+              <a href="{% url 'agenda' %}" class="btn btn-sm btn-primary">Agendar Cita</a>
+            </div>
+            <div class="card-body p-4">
+              {% if appointments %}
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Descripción</th>
+                        <th class="text-center">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for appt in appointments %}
+                        <tr>
+                          <td>{{ appt.fecha|date:"d/m/Y" }}</td>
+                          <td>{{ appt.hora|time:"H:i" }}</td>
+                          <td>{{ appt.descripcion }}</td>
+                          <td class="text-center">
+                            <div class="btn-group" role="group">
+                              <a href="{% url 'update_appointment' appt.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
+                              <a href="{% url 'delete_appointment' appt.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Deseas cancelar esta cita?')">Cancelar</a>
+                            </div>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <h5>No tienes citas agendadas aún.</h5>
+                  <p class="mb-0">Haz clic en el botón de arriba para programar una nueva cita.</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
 
   {% else %}
   <div class="row justify-content-center py-5">
@@ -71,6 +147,14 @@
 
           <form method="POST" action="{% url 'home' %}">
             {% csrf_token %}
+            <div class="mb-3">
+              <label for="role" class="form-label">Rol</label>
+              <select class="form-select" name="role" required>
+                <option value="Cliente" selected>Cliente</option>
+                <option value="Administrador">Administrador</option>
+              </select>
+            </div>
+
             <div class="mb-3">
               <label for="username" class="form-label">Username</label>
               <input type="text" class="form-control" name="username" placeholder="Username" required />

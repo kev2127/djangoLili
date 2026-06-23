@@ -12,13 +12,26 @@ from .models import Record, Appointment #Para el formulario de citas
 
 # formulario de registro de usuarios personalizado que hereda de UserCreationForm
 class SignUpForm(UserCreationForm):
+    role = forms.ChoiceField(
+        choices=[('Administrador', 'Administrador'), ('Cliente', 'Cliente')],
+        label='',
+        initial='Cliente',
+        widget=forms.Select(attrs={'class': 'form-select mb-3', 'id': 'role-select'})
+    )
     email = forms.EmailField(label='', widget=forms.EmailInput(attrs={'placeholder': 'Correo electrónico', 'class': 'form-control'}))
     first_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Nombre', 'class': 'form-control'}))
     last_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Apellido', 'class': 'form-control'}))
+    
+    # Campos adicionales para Cliente
+    phone = forms.CharField(label='', max_length=15, required=False, widget=forms.TextInput(attrs={'placeholder': 'Teléfono', 'class': 'form-control client-field'}))
+    address = forms.CharField(label='', max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'Dirección', 'class': 'form-control client-field'}))
+    city = forms.CharField(label='', max_length=50, required=False, widget=forms.TextInput(attrs={'placeholder': 'Ciudad', 'class': 'form-control client-field'}))
+    state = forms.CharField(label='', max_length=50, required=False, widget=forms.TextInput(attrs={'placeholder': 'Estado', 'class': 'form-control client-field'}))
+    zipcode = forms.CharField(label='', max_length=20, required=False, widget=forms.TextInput(attrs={'placeholder': 'Código postal', 'class': 'form-control client-field'}))
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email')
 
     # ← __init__ va AQUÍ, fuera de Meta
     def __init__(self, *args, **kwargs):
