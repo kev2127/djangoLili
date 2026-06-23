@@ -8,9 +8,9 @@
                 <h2 class="mb-4">Actualizar Cita</h2>
                 <form method="POST">
                     {% csrf_token %}
-                    
+
                     {% if form.record.is_hidden %}
-                        {{ form.record }}
+                    {{ form.record }}
                     {% endif %}
 
                     <div class="row g-3">
@@ -33,7 +33,7 @@
                             {{ form.hora }}
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">Descripción</label>
+                            <label class="form-label">Descripción de la cita </label>
                             {{ form.descripcion }}
                         </div>
                     </div>

@@ -13,9 +13,9 @@
             <h5 class="card-title mb-3">Agendar Nueva Cita</h5>
             <form method="POST">
                 {% csrf_token %}
-                
+
                 {% if form.record.is_hidden %}
-                    {{ form.record }}
+                {{ form.record }}
                 {% endif %}
 
                 <div class="row g-3">
@@ -39,7 +39,7 @@
                         {{ form.hora }}
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Descripción</label>
+                        <label class="form-label fw-bold">Descripción de la cita</label>
                         {{ form.descripcion }}
                     </div>
                 </div>
@@ -76,9 +76,10 @@
                         {% else %}
                         <td>
                             {% if appt.administrator %}
-                                {{ appt.administrator.first_name }} {{ appt.administrator.last_name }} ({{ appt.administrator.username }})
+                            {{ appt.administrator.first_name }} {{ appt.administrator.last_name }} ({{
+                            appt.administrator.username }})
                             {% else %}
-                                <span class="text-muted">No asignado</span>
+                            <span class="text-muted">No asignado</span>
                             {% endif %}
                         </td>
                         {% endif %}
