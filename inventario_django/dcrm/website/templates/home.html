@@ -105,38 +105,39 @@
         <div class="card-body p-4">
           {% if appointments %}
           <div class="table-responsive">
-             <table class="table table-hover align-middle">
-               <thead>
-                 <tr>
-                   <th>Administrador</th>
-                   <th>Fecha</th>
-                   <th>Hora</th>
-                   <th>Descripción</th>
-                   <th class="text-center">Acciones</th>
-                 </tr>
-               </thead>
-               <tbody>
-                 {% for appt in appointments %}
-                 <tr>
-                   <td>
-                     {% if appt.administrator %}
-                       {% if appt.administrator.first_name or appt.administrator.last_name %}
-                         {{ appt.administrator.first_name }} {{ appt.administrator.last_name }} ({{ appt.administrator.username }})
-                       {% else %}
-                         {{ appt.administrator.username }}
-                       {% endif %}
-                     {% else %}
-                       <span class="text-muted">No asignado</span>
-                     {% endif %}
-                   </td>
-                   <td>{{ appt.fecha|date:"d/m/Y" }}</td>
-                   <td>{{ appt.hora|time:"H:i" }}</td>
-                   <td>{{ appt.descripcion }}</td>
-                   <td class="text-center">
-                     <div class="btn-group" role="group">
-                       <a href="{% url 'update_appointment' appt.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Administrador</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Descripción</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for appt in appointments %}
+                <tr>
+                  <td>
+                    {% if appt.administrator %}
+                    {% if appt.administrator.first_name or appt.administrator.last_name %}
+                    {{ appt.administrator.first_name }} {{ appt.administrator.last_name }} ({{
+                    appt.administrator.username }})
+                    {% else %}
+                    {{ appt.administrator.username }}
+                    {% endif %}
+                    {% else %}
+                    <span class="text-muted">No asignado</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ appt.fecha|date:"d/m/Y" }}</td>
+                  <td>{{ appt.hora|time:"H:i" }}</td>
+                  <td>{{ appt.descripcion }}</td>
+                  <td class="text-center">
+                    <div class="btn-group" role="group">
+                      <a href="{% url 'update_appointment' appt.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
 
-                       <a href="#" class="btn btn-sm btn-outline-danger" onclick="confirmarAccion('{% url 'delete_appointment' appt.id %}', {
+                      <a href="#" class="btn btn-sm btn-outline-danger" onclick="confirmarAccion('{% url 'delete_appointment' appt.id %}', {
                          titulo: 'Cancelar cita',
                          mensaje: '¿Deseas cancelar esta cita agendada?',
                          subMensaje: 'Podrás agendar una nueva cuando quieras.',
@@ -146,11 +147,11 @@
                        }); return false;">Cancelar</a>
 
 
-                     </div>
-                   </td>
-                 </tr>
-                 {% endfor %}
-               </tbody>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
             </table>
           </div>
           {% else %}
@@ -173,7 +174,7 @@
           <h2 class="welcome-header text-center mb-3">Iniciar Sesión</h2>
           <p class="text-center text-muted mb-4">Ingresa tus credenciales para continuar</p>
 
-          <form method="POST" action="{% url 'home' %}">
+          <form method="POST" action="{% url 'home' %}" novalidate id="formLogin">
             {% csrf_token %}
             <div class="mb-3">
               <label for="role" class="form-label">Rol</label>
@@ -185,18 +186,59 @@
 
             <div class="mb-3">
               <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" name="username" placeholder="Username" required />
+              <input type="text" class="form-control" name="username" id="login_username" placeholder="Username"
+                required />
+              <div class="invalid-feedback" id="username-error"
+                style="display: none; color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
+                ❌ Debe ingresar un nombre de usuario válido
+              </div>
             </div>
 
             <div class="mb-4">
               <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" name="password" placeholder="••••••••" required />
+              <input type="password" class="form-control" name="password" id="login_password" placeholder="••••••••"
+                required />
+              <div class="invalid-feedback" id="password-error"
+                style="display: none; color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
+                ❌ La contraseña no puede estar vacía
+              </div>
             </div>
 
             <div class="d-grid gap-2">
               <button type="submit" class="btn btn-primary btn-lg">Ingresar al Sistema</button>
             </div>
           </form>
+
+          <script>
+            // Validación básica del login para evitar el mensaje nativo flotante
+            document.getElementById('formLogin').addEventListener('submit', function (e) {
+              let valido = true;
+              const user = document.getElementById('login_username');
+              const pass = document.getElementById('login_password');
+
+              if (!user.value.trim()) {
+                document.getElementById('username-error').style.display = 'block';
+                user.classList.add('is-invalid');
+                valido = false;
+              } else {
+                document.getElementById('username-error').style.display = 'none';
+                user.classList.remove('is-invalid');
+              }
+
+              if (!pass.value.trim()) {
+                document.getElementById('password-error').style.display = 'block';
+                pass.classList.add('is-invalid');
+                valido = false;
+              } else {
+                document.getElementById('password-error').style.display = 'none';
+                pass.classList.remove('is-invalid');
+              }
+
+              if (!valido) {
+                e.preventDefault();
+              }
+            });
+          </script>
         </div>
       </div>
     </div>

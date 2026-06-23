@@ -18,11 +18,10 @@ class SignUpForm(UserCreationForm):
         initial='Cliente',
         widget=forms.Select(attrs={'class': 'form-select mb-3', 'id': 'role-select'})
     )
-    email = forms.EmailField(label='', widget=forms.EmailInput(attrs={'placeholder': 'Correo electrónico', 'class': 'form-control'}))
+    email = forms.EmailField(label='', widget=forms.EmailInput(attrs={'placeholder': 'Correo electrónico', 'class': 'form-control', 'id': 'id_email'}))
     first_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Nombre', 'class': 'form-control'}))
     last_name = forms.CharField(label='', max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Apellido', 'class': 'form-control'}))
     
-    # Campos adicionales para Cliente
     phone = forms.CharField(label='', max_length=15, required=False, widget=forms.TextInput(attrs={'placeholder': 'Teléfono', 'class': 'form-control client-field'}))
     address = forms.CharField(label='', max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'Dirección', 'class': 'form-control client-field'}))
     city = forms.CharField(label='', max_length=50, required=False, widget=forms.TextInput(attrs={'placeholder': 'Ciudad', 'class': 'form-control client-field'}))
@@ -33,7 +32,6 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ('username', 'first_name', 'last_name', 'email')
 
-    # ← __init__ va AQUÍ, fuera de Meta
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['class'] = 'form-control'
@@ -41,20 +39,18 @@ class SignUpForm(UserCreationForm):
         self.fields['username'].label = ''
         self.fields['username'].help_text = '<span class="form-text text-muted"><small>Requerido. 150 caracteres o menos.</small></span>'
 
+        # Agregamos IDs explícitos para el script de validación visual
         self.fields['password1'].widget.attrs['class'] = 'form-control'
         self.fields['password1'].widget.attrs['placeholder'] = 'Contraseña'
+        self.fields['password1'].widget.attrs['id'] = 'id_password1'
         self.fields['password1'].label = ''
-        self.fields['password1'].help_text = (
-            '<ul class="form-text text-muted small">'
-            '<li>Mínimo 8 caracteres.</li>'
-            '<li>No puede ser completamente numérica.</li>'
-            '</ul>'
-        )
+        self.fields['password1'].help_text = '' # Quitamos el texto estático por defecto
 
         self.fields['password2'].widget.attrs['class'] = 'form-control'
         self.fields['password2'].widget.attrs['placeholder'] = 'Confirmar contraseña'
+        self.fields['password2'].widget.attrs['id'] = 'id_password2'
         self.fields['password2'].label = ''
-        self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Ingresa la misma contraseña para verificación.</small></span>'
+        self.fields['password2'].help_text = '' # Quitamos el texto estático por defecto
  # personaliza el campo de contraseña 2 agregando un mensaje de ayuda para indicar al usuario los requisitos para la contraseña.
 # ------------------ formulario agregar registro ------------------
 # formulario par agregar registro del modelo Records    
@@ -69,7 +65,7 @@ class AddRecordForm(forms.ModelForm):
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
             'last_name':  forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellido'}),
-            'email':      forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correo@ejemplo.com'}),
+            'email': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'correo@ejemplo.com'}),
             'phone':      forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Teléfono'}),
             'address':    forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dirección'}),
             'city':       forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ciudad'}),

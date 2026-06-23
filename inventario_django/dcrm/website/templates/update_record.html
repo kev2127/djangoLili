@@ -3,11 +3,11 @@
 {% block content %}
 <div class="col-md-6 offset-md-3">
     <h2>Actualizar Registro</h2>
-    <form method="POST" id="formActualizar">
+    <form method="POST" id="formActualizar" novalidate>
         {% csrf_token %}
         {{ form.as_p }}
-        <br />
-        <button type="button" class="btn btn-primary" onclick="pedirConfirmacionActualizar()">
+
+        <button type="button" class="btn btn-primary" onclick="validarYConfirmar()">
             Actualizar Registro
         </button>
         <a href="{% url 'home' %}" class="btn btn-secondary">Atrás</a>
@@ -15,15 +15,74 @@
 </div>
 
 <script>
-    function pedirConfirmacionActualizar() {
-        confirmarFormulario('formActualizar', {
-            titulo: 'Actualizar registro',
-            mensaje: '¿Estás seguro de que deseas guardar los cambios?',
-            subMensaje: 'Los datos anteriores serán reemplazados.',
-            color: 'primary',
-            icono: 'pencil-square',
-            btnTexto: 'Sí, actualizar'
-        });
+    function validarYConfirmar() {
+        let valido = true;
+
+        // --- Email ---
+        const email = document.getElementById('id_email');
+        let errorEmail = document.getElementById('error-email');
+        if (!errorEmail) {
+            errorEmail = document.createElement('div');
+            errorEmail.id = 'error-email';
+            errorEmail.style.cssText = 'color:#dc3545; font-size:0.875em; margin-top:0.25rem;';
+            email.parentNode.appendChild(errorEmail);
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+            errorEmail.innerHTML = '❌ Debe ser un correo electrónico válido (correo@gmail.com)';
+            email.classList.add('is-invalid');
+            valido = false;
+        } else {
+            errorEmail.innerHTML = '';
+            email.classList.remove('is-invalid');
+        }
+
+        // --- Nombre ---
+        const firstName = document.getElementById('id_first_name');
+        let errorFirstName = document.getElementById('error-first_name');
+        if (!errorFirstName) {
+            errorFirstName = document.createElement('div');
+            errorFirstName.id = 'error-first_name';
+            errorFirstName.style.cssText = 'color:#dc3545; font-size:0.875em; margin-top:0.25rem;';
+            firstName.parentNode.appendChild(errorFirstName);
+        }
+        if (!firstName.value.trim()) {
+            errorFirstName.innerHTML = '❌ El nombre no puede estar vacío';
+            firstName.classList.add('is-invalid');
+            valido = false;
+        } else {
+            errorFirstName.innerHTML = '';
+            firstName.classList.remove('is-invalid');
+        }
+
+        // --- Apellido ---
+        const lastName = document.getElementById('id_last_name');
+        let errorLastName = document.getElementById('error-last_name');
+        if (!errorLastName) {
+            errorLastName = document.createElement('div');
+            errorLastName.id = 'error-last_name';
+            errorLastName.style.cssText = 'color:#dc3545; font-size:0.875em; margin-top:0.25rem;';
+            lastName.parentNode.appendChild(errorLastName);
+        }
+        if (!lastName.value.trim()) {
+            errorLastName.innerHTML = '❌ El apellido no puede estar vacío';
+            lastName.classList.add('is-invalid');
+            valido = false;
+        } else {
+            errorLastName.innerHTML = '';
+            lastName.classList.remove('is-invalid');
+        }
+
+        if (valido) {
+            confirmarFormulario('formActualizar', {
+                titulo: 'Actualizar registro',
+                mensaje: '¿Estás seguro de que deseas guardar los cambios?',
+                subMensaje: 'Los datos anteriores serán reemplazados.',
+                color: 'primary',
+                icono: 'pencil-square',
+                btnTexto: 'Sí, actualizar'
+            });
+        }
     }
 </script>
 {% endblock %}

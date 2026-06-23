@@ -1,6 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<style>
+    /* Estilos dinámicos para la lista de requerimientos */
+    .validation-rule {
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+        transition: color 0.3s ease;
+    }
+
+    .rule-invalid {
+        color: #dc3545;
+        /* Rojo Bootstrap */
+    }
+
+    .rule-valid {
+        color: #198754;
+        /* Verde Bootstrap */
+    }
+
+    .custom-error-msg {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+</style>
+
 <div class="row justify-content-center py-5">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow">
@@ -8,33 +34,33 @@
                 <h2 class="welcome-header text-center mb-3">Registro de Usuario</h2>
                 <p class="text-center text-muted mb-4">Crea una cuenta en el sistema</p>
 
-                <form method="POST">
+                <form method="POST" id="formRegistro" novalidate>
                     {% csrf_token %}
 
-                    <!-- Campo de Rol -->
                     <div class="mb-3">
                         <label class="form-label fw-bold">Seleccione su Rol</label>
                         {{ form.role }}
                         {% if form.role.errors %}
-                            <div class="text-danger small">{{ form.role.errors }}</div>
+                        <div class="text-danger small">{{ form.role.errors }}</div>
                         {% endif %}
                     </div>
 
-                    <!-- Campos de Usuario Generales -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Nombre de usuario</label>
                             {{ form.username }}
                             {% if form.username.errors %}
-                                <div class="text-danger small">{{ form.username.errors }}</div>
+                            <div class="text-danger small">{{ form.username.errors }}</div>
                             {% endif %}
                             <small class="text-muted">{{ form.username.help_text|safe }}</small>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Correo electrónico</label>
                             {{ form.email }}
+                            <div id="email-custom-error" class="custom-error-msg">❌ Debe ser un correo electrónico
+                                válido (ejemplo@dominio.com)</div>
                             {% if form.email.errors %}
-                                <div class="text-danger small">{{ form.email.errors }}</div>
+                            <div class="text-danger small">{{ form.email.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -44,36 +70,35 @@
                             <label class="form-label fw-bold">Nombre</label>
                             {{ form.first_name }}
                             {% if form.first_name.errors %}
-                                <div class="text-danger small">{{ form.first_name.errors }}</div>
+                            <div class="text-danger small">{{ form.first_name.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Apellido</label>
                             {{ form.last_name }}
                             {% if form.last_name.errors %}
-                                <div class="text-danger small">{{ form.last_name.errors }}</div>
+                            <div class="text-danger small">{{ form.last_name.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
 
-                    <!-- Campos específicos de Cliente -->
                     <div id="client-fields-container">
                         <hr class="my-4">
                         <h5 class="text-secondary mb-3">Datos de Cliente / Contacto</h5>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Teléfono</label>
                                 {{ form.phone }}
                                 {% if form.phone.errors %}
-                                    <div class="text-danger small">{{ form.phone.errors }}</div>
+                                <div class="text-danger small">{{ form.phone.errors }}</div>
                                 {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Código Postal</label>
                                 {{ form.zipcode }}
                                 {% if form.zipcode.errors %}
-                                    <div class="text-danger small">{{ form.zipcode.errors }}</div>
+                                <div class="text-danger small">{{ form.zipcode.errors }}</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -82,7 +107,7 @@
                             <label class="form-label fw-bold">Dirección</label>
                             {{ form.address }}
                             {% if form.address.errors %}
-                                <div class="text-danger small">{{ form.address.errors }}</div>
+                            <div class="text-danger small">{{ form.address.errors }}</div>
                             {% endif %}
                         </div>
 
@@ -91,14 +116,14 @@
                                 <label class="form-label fw-bold">Ciudad</label>
                                 {{ form.city }}
                                 {% if form.city.errors %}
-                                    <div class="text-danger small">{{ form.city.errors }}</div>
+                                <div class="text-danger small">{{ form.city.errors }}</div>
                                 {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Estado / Provincia</label>
                                 {{ form.state }}
                                 {% if form.state.errors %}
-                                    <div class="text-danger small">{{ form.state.errors }}</div>
+                                <div class="text-danger small">{{ form.state.errors }}</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -111,18 +136,27 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Contraseña</label>
                             {{ form.password1 }}
+
+                            <div id="password-requirements" class="mt-2 p-3 bg-light rounded"
+                                style="display:none; border-left: 4px solid #0d6efd;">
+                                <div id="req-length" class="validation-rule rule-invalid">❌ Mínimo 8 caracteres</div>
+                                <div id="req-number" class="validation-rule rule-invalid">❌ No puede ser completamente
+                                    numérica</div>
+                            </div>
+
                             {% if form.password1.errors %}
-                                <div class="text-danger small">{{ form.password1.errors }}</div>
+                            <div class="text-danger small">{{ form.password1.errors }}</div>
                             {% endif %}
-                            <small class="text-muted">{{ form.password1.help_text|safe }}</small>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Confirmar contraseña</label>
                             {{ form.password2 }}
+
+                            <div id="password-match-error" class="custom-error-msg">❌ Las contraseñas no coinciden</div>
+
                             {% if form.password2.errors %}
-                                <div class="text-danger small">{{ form.password2.errors }}</div>
+                            <div class="text-danger small">{{ form.password2.errors }}</div>
                             {% endif %}
-                            <small class="text-muted">{{ form.password2.help_text|safe }}</small>
                         </div>
                     </div>
 
@@ -135,9 +169,9 @@
     </div>
 </div>
 
-<!-- JavaScript para alternar visibilidad de campos de cliente -->
 <script>
-    (function() {
+    (function () {
+        // --- 1. LÓGICA EXISTENTE: ALTERNAR ROLES (Se mantiene intacta) ---
         const roleSelect = document.getElementById("role-select");
         const clientFields = document.getElementById("client-fields-container");
         if (!roleSelect || !clientFields) return;
@@ -146,19 +180,115 @@
         function toggleFields() {
             if (roleSelect.value === "Administrador") {
                 clientFields.style.display = "none";
-                clientInputs.forEach(input => {
-                    input.required = false;
-                });
+                clientInputs.forEach(input => { input.required = false; });
             } else {
                 clientFields.style.display = "block";
-                clientInputs.forEach(input => {
-                    input.required = true;
-                });
+                clientInputs.forEach(input => { input.required = true; });
             }
         }
 
         roleSelect.addEventListener("change", toggleFields);
-        toggleFields(); // Ejecutar al cargar la página
+        toggleFields();
+
+
+        // --- 2. LÓGICA NUEVA: VALIDACIONES VISUALES ESTILIZADAS ---
+        const formRegistro = document.getElementById("formRegistro");
+        const emailInput = document.getElementById("id_email");
+        const pass1 = document.getElementById("id_password1");
+        const pass2 = document.getElementById("id_password2");
+
+        const emailError = document.getElementById("email-custom-error");
+        const passRequirements = document.getElementById("password-requirements");
+        const matchError = document.getElementById("password-match-error");
+
+        const reqLength = document.getElementById("req-length");
+        const reqNumber = document.getElementById("req-number");
+
+        // Validación de Correo Electrónico en tiempo real
+        if (emailInput) {
+            emailInput.addEventListener("input", function () {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (emailInput.value.length > 0 && !emailRegex.test(emailInput.value)) {
+                    emailError.style.display = "block";
+                    emailInput.classList.add("is-invalid");
+                } else {
+                    emailError.style.display = "none";
+                    emailInput.classList.remove("is-invalid");
+                    if (emailInput.value.length > 0) emailInput.classList.add("is-valid");
+                }
+            });
+        }
+
+        // Mostrar caja de requerimientos e ir validando la contraseña
+        if (pass1) {
+            pass1.addEventListener("focus", () => {
+                passRequirements.style.display = "block";
+            });
+
+            pass1.addEventListener("input", function () {
+                const value = pass1.value;
+
+                // Requisito 1: Mínimo 8 caracteres
+                updateRuleState(reqLength, value.length >= 8, "Mínimo 8 caracteres");
+
+                // Requisito 2: No ser solo números (debe contener letras/caracteres)
+                const isOnlyNumbers = /^\d+$/.test(value);
+                updateRuleState(reqNumber, value.length > 0 && !isOnlyNumbers, "No puede ser completamente numérica");
+            });
+        }
+
+        // Función auxiliar para cambiar el icono de ❌ a ✔
+        function updateRuleState(element, isValid, text) {
+            if (isValid) {
+                element.classList.remove("rule-invalid");
+                element.classList.add("rule-valid");
+                element.innerHTML = `✔ ${text}`;
+            } else {
+                element.classList.remove("rule-valid");
+                element.classList.add("rule-invalid");
+                element.innerHTML = `❌ ${text}`;
+            }
+        }
+
+        // Validación de coincidencia (Password 2)
+        if (pass2) {
+            pass2.addEventListener("input", function () {
+                if (pass1.value !== pass2.value && pass2.value.length > 0) {
+                    matchError.style.display = "block";
+                    pass2.classList.add("is-invalid");
+                    pass2.classList.remove("is-valid");
+                } else if (pass2.value.length > 0) {
+                    matchError.style.display = "none";
+                    pass2.classList.remove("is-invalid");
+                    pass2.classList.add("is-valid");
+                } else {
+                    matchError.style.display = "none";
+                    pass2.classList.remove("is-invalid", "is-valid");
+                }
+            });
+        }
+
+        // Evitar el submit nativo del navegador si el frontend detecta errores de sintaxis
+        formRegistro.addEventListener("submit", function (e) {
+            let esValido = true;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailInput && !emailRegex.test(emailInput.value)) {
+                emailError.style.display = "block";
+                emailInput.classList.add("is-invalid");
+                esValido = false;
+            }
+
+            if (pass1 && pass2 && pass1.value !== pass2.value) {
+                matchError.style.display = "block";
+                pass2.classList.add("is-invalid");
+                esValido = false;
+            }
+
+            if (!esValido) {
+                e.preventDefault(); // Cancela el envío si el formato visual no cumple
+            }
+        });
     })();
 </script>
 
