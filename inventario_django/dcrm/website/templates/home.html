@@ -105,40 +105,52 @@
         <div class="card-body p-4">
           {% if appointments %}
           <div class="table-responsive">
-            <table class="table table-hover align-middle">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Hora</th>
-                  <th>Descripción</th>
-                  <th class="text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for appt in appointments %}
-                <tr>
-                  <td>{{ appt.fecha|date:"d/m/Y" }}</td>
-                  <td>{{ appt.hora|time:"H:i" }}</td>
-                  <td>{{ appt.descripcion }}</td>
-                  <td class="text-center">
-                    <div class="btn-group" role="group">
-                      <a href="{% url 'update_appointment' appt.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
+             <table class="table table-hover align-middle">
+               <thead>
+                 <tr>
+                   <th>Administrador</th>
+                   <th>Fecha</th>
+                   <th>Hora</th>
+                   <th>Descripción</th>
+                   <th class="text-center">Acciones</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 {% for appt in appointments %}
+                 <tr>
+                   <td>
+                     {% if appt.administrator %}
+                       {% if appt.administrator.first_name or appt.administrator.last_name %}
+                         {{ appt.administrator.first_name }} {{ appt.administrator.last_name }} ({{ appt.administrator.username }})
+                       {% else %}
+                         {{ appt.administrator.username }}
+                       {% endif %}
+                     {% else %}
+                       <span class="text-muted">No asignado</span>
+                     {% endif %}
+                   </td>
+                   <td>{{ appt.fecha|date:"d/m/Y" }}</td>
+                   <td>{{ appt.hora|time:"H:i" }}</td>
+                   <td>{{ appt.descripcion }}</td>
+                   <td class="text-center">
+                     <div class="btn-group" role="group">
+                       <a href="{% url 'update_appointment' appt.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
 
-                      <a href="#" class="btn btn-sm btn-outline-danger" onclick="confirmarAccion('{% url 'delete_appointment' appt.id %}', {
-                        titulo: 'Cancelar cita',
-                        mensaje: '¿Deseas cancelar esta cita agendada?',
-                        subMensaje: 'Podrás agendar una nueva cuando quieras.',
-                        color: 'warning',
-                        icono: 'calendar-x',
-                        btnTexto: 'Sí, cancelar'
-                      }); return false;">Cancelar</a>
+                       <a href="#" class="btn btn-sm btn-outline-danger" onclick="confirmarAccion('{% url 'delete_appointment' appt.id %}', {
+                         titulo: 'Cancelar cita',
+                         mensaje: '¿Deseas cancelar esta cita agendada?',
+                         subMensaje: 'Podrás agendar una nueva cuando quieras.',
+                         color: 'warning',
+                         icono: 'calendar-x',
+                         btnTexto: 'Sí, cancelar'
+                       }); return false;">Cancelar</a>
 
 
-                    </div>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
+                     </div>
+                   </td>
+                 </tr>
+                 {% endfor %}
+               </tbody>
             </table>
           </div>
           {% else %}

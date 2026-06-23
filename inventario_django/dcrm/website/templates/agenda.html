@@ -77,10 +77,13 @@
                         {% else %}
                         <td>
                             {% if appt.administrator %}
-                            {{ appt.administrator.first_name }} {{ appt.administrator.last_name }} ({{
-                            appt.administrator.username }})
+                                {% if appt.administrator.first_name or appt.administrator.last_name %}
+                                    {{ appt.administrator.first_name }} {{ appt.administrator.last_name }} ({{ appt.administrator.username }})
+                                {% else %}
+                                    {{ appt.administrator.username }}
+                                {% endif %}
                             {% else %}
-                            <span class="text-muted">No asignado</span>
+                                <span class="text-muted">No asignado</span>
                             {% endif %}
                         </td>
                         {% endif %}

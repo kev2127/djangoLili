@@ -137,9 +137,10 @@
 
 <!-- JavaScript para alternar visibilidad de campos de cliente -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    (function() {
         const roleSelect = document.getElementById("role-select");
         const clientFields = document.getElementById("client-fields-container");
+        if (!roleSelect || !clientFields) return;
         const clientInputs = clientFields.querySelectorAll(".client-field");
 
         function toggleFields() {
@@ -158,7 +159,7 @@
 
         roleSelect.addEventListener("change", toggleFields);
         toggleFields(); // Ejecutar al cargar la página
-    });
+    })();
 </script>
 
 {% endblock %}

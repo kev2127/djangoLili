@@ -11,9 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
     <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <!-- HTMX library for SPA navigation -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 
-<body>
+<body hx-boost="true">
     {% include 'navbar.html' %}
     <div class="container">
         <br />
@@ -32,24 +34,45 @@
     </div>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script>
-        // Auto-dismiss alert messages after 3 seconds (3000ms)
-        setTimeout(function () {
-            let alerts = document.querySelectorAll('.alert-dismissible');
-            alerts.forEach(function (alert) {
-                // If Bootstrap is loaded, use its method for a smooth transition
-                if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
-                    try {
-                        let bsAlert = new bootstrap.Alert(alert);
-                        bsAlert.close();
-                    } catch (e) {
-                        alert.style.display = 'none';
-                    }
-                } else {
-                    // Fallback to simple hiding if Bootstrap JS didn't load
-                    alert.style.display = 'none';
-                }
+        // Auto-dismiss alert messages using htmx.onLoad to support SPA transitions
+        if (typeof htmx !== 'undefined') {
+            htmx.onLoad(function (content) {
+                let alerts = content.querySelectorAll('.alert-dismissible');
+                alerts.forEach(function (alert) {
+                    setTimeout(function () {
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                            try {
+                                let bsAlert = new bootstrap.Alert(alert);
+                                bsAlert.close();
+                            } catch (e) {
+                                alert.style.display = 'none';
+                            }
+                        } else {
+                            alert.style.display = 'none';
+                        }
+                    }, 3000);
+                });
             });
-        }, 3000);
+        } else {
+            // Fallback for non-HTMX loads
+            document.addEventListener("DOMContentLoaded", function () {
+                let alerts = document.querySelectorAll('.alert-dismissible');
+                alerts.forEach(function (alert) {
+                    setTimeout(function () {
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                            try {
+                                let bsAlert = new bootstrap.Alert(alert);
+                                bsAlert.close();
+                            } catch (e) {
+                                alert.style.display = 'none';
+                            }
+                        } else {
+                            alert.style.display = 'none';
+                        }
+                    }, 3000);
+                });
+            });
+        }
     </script>
     <!-- Modal de Confirmación Reutilizable -->
     <div class="modal fade" id="modalConfirmar" tabindex="-1" aria-labelledby="modalConfirmarLabel" aria-hidden="true">
@@ -128,11 +151,29 @@
             btnConfirmar.className = `btn btn-${color}`;
             btnConfirmar.removeAttribute('href');
             btnConfirmar.onclick = function () {
-                document.getElementById(formId).submit();
+                const form = document.getElementById(formId);
+                if (form) {
+                    if (typeof form.requestSubmit === 'function') {
+                        form.requestSubmit();
+                    } else {
+                        form.submit();
+                    }
+                }
             };
 
             new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
         }
+
+        // Clean up Bootstrap modals/backdrops on HTMX page swaps to prevent artifacts
+        document.body.addEventListener('htmx:beforeSwap', function(event) {
+            let backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        });
     </script>
 </body>
 
