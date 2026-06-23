@@ -1,7 +1,8 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Django CRM</title>
@@ -10,30 +11,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
     <link rel="stylesheet" href="{% static 'css/style.css'%}">
-  </head>
-  <body>
+</head>
+
+<body>
     {% include 'navbar.html' %}
     <div class="container">
-        <br/>
+        <br />
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
         {% endif %}
 
         {% block content %}
-            {% endblock %}
-   
+        {% endblock %}
+
     </div>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script>
         // Auto-dismiss alert messages after 3 seconds (3000ms)
-        setTimeout(function() {
+        setTimeout(function () {
             let alerts = document.querySelectorAll('.alert-dismissible');
-            alerts.forEach(function(alert) {
+            alerts.forEach(function (alert) {
                 // If Bootstrap is loaded, use its method for a smooth transition
                 if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
                     try {
@@ -49,5 +51,63 @@
             });
         }, 3000);
     </script>
-  </body>
+    <!-- Modal de Confirmación Reutilizable -->
+    <div class="modal fade" id="modalConfirmar" tabindex="-1" aria-labelledby="modalConfirmarLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <!-- Header dinámico según tipo -->
+                <div class="modal-header text-white border-0" id="modalHeader">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center"
+                            style="width:38px; height:38px; background:rgba(255,255,255,0.2);">
+                            <i id="modalIcono" class="bi bi-exclamation-triangle fs-5"></i>
+                        </div>
+                        <h5 class="modal-title mb-0" id="modalConfirmarLabel">Confirmar acción</h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Cuerpo -->
+                <div class="modal-body px-4 py-3">
+                    <p class="mb-1 fw-semibold" id="modalMensaje">¿Estás seguro?</p>
+                    <p class="text-muted small mb-0" id="modalSubMensaje">Esta acción no se puede deshacer.</p>
+                </div>
+
+                <!-- Botones -->
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a id="modalBtnConfirmar" href="#" class="btn btn-danger">Confirmar</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Activa el modal en lugar del confirm() nativo
+        function confirmarAccion(url, opciones = {}) {
+            const {
+                titulo = 'Confirmar acción',
+                mensaje = '¿Estás seguro de continuar?',
+                subMensaje = 'Esta acción no se puede deshacer.',
+                color = 'danger',   // 'danger' | 'warning' | 'primary'
+                icono = 'trash',    // nombre de Bootstrap Icon
+                btnTexto = 'Confirmar'
+            } = opciones;
+
+            document.getElementById('modalConfirmarLabel').textContent = titulo;
+            document.getElementById('modalMensaje').textContent = mensaje;
+            document.getElementById('modalSubMensaje').textContent = subMensaje;
+            document.getElementById('modalBtnConfirmar').href = url;
+            document.getElementById('modalBtnConfirmar').className = `btn btn-${color}`;
+            document.getElementById('modalBtnConfirmar').textContent = btnTexto;
+            document.getElementById('modalHeader').className = `modal-header text-white border-0 bg-${color}`;
+            document.getElementById('modalIcono').className = `bi bi-${icono} fs-5`;
+
+            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
+        }
+    </script>
+</body>
+
 </html>

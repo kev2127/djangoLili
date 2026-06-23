@@ -59,7 +59,7 @@
                 <thead class="table-dark">
                     <tr>
                         {% if role == 'Administrador' %}
-                        <th>Paciente</th>
+                        <th>Cliente</th>
                         {% else %}
                         <th>Administrador</th>
                         {% endif %}
@@ -88,8 +88,13 @@
                         <td>{{ appt.hora|time:"H:i" }}</td>
                         <td>{{ appt.descripcion }}</td>
                         <td class="text-center">
-                            <a href="{% url 'delete_appointment' appt.id %}" class="btn btn-sm btn-outline-danger"
-                                onclick="return confirm('¿Eliminar esta cita?')">Eliminar</a>
+                            <a href="#" class="btn btn-sm btn-outline-danger" onclick="confirmarAccion('{% url 'delete_appointment' appt.id %}', {
+                                titulo: 'Eliminar cita',
+                                mensaje: '¿Estás seguro de que deseas eliminar esta cita?',
+                                color: 'danger',
+                                icono: 'trash',
+                                btnTexto: 'Sí, eliminar'
+                            }); return false;">Eliminar</a>
                             <a href="{% url 'update_appointment' appt.id %}"
                                 class="btn btn-sm btn-outline-warning">Editar</a>
                         </td>
