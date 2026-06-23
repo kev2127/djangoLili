@@ -66,7 +66,7 @@ def customer_record(request, pk):
     # Por ahora redirige a la página principal.
     if request.user.is_authenticated:
         customer_record = Record.objects.get(id=pk)
-        return render(request, 'record.html', {'record':customer_record})
+        return render(request, 'record.html', {'customer_record':customer_record})
     else:
         messages.error(request, "🚫 no estas autentidicado entonces no se puede hacer esta accion")
         return redirect('home')
