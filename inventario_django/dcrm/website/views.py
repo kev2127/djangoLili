@@ -198,6 +198,7 @@ def agenda(request):
         return redirect('home')
 
     from .models import Profile, Appointment
+    from django import forms as django_forms
     profile, created = Profile.objects.get_or_create(
         user=request.user, 
         defaults={'role': 'Administrador' if request.user.is_superuser or request.user.is_staff else 'Cliente'}
@@ -219,6 +220,7 @@ def agenda(request):
         if client_record:
             form.fields['record'].queryset = Record.objects.filter(id=client_record.id)
             form.fields['record'].initial = client_record
+            form.fields['record'].widget = django_forms.HiddenInput()
         else:
             form.fields['record'].queryset = Record.objects.none()
 
@@ -255,6 +257,7 @@ def update_appointment(request, pk):
         return redirect('home')
         
     from .models import Profile, Appointment
+    from django import forms as django_forms
     profile, created = Profile.objects.get_or_create(
         user=request.user, 
         defaults={'role': 'Administrador' if request.user.is_superuser or request.user.is_staff else 'Cliente'}
@@ -269,6 +272,7 @@ def update_appointment(request, pk):
             client_record = Record.objects.filter(user=request.user).first()
             if client_record:
                 form.fields['record'].queryset = Record.objects.filter(id=client_record.id)
+                form.fields['record'].widget = django_forms.HiddenInput()
                 
         if request.method == 'POST':
             if form.is_valid():

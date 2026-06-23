@@ -29,6 +29,7 @@ class Record(models.Model):
 
 class Appointment(models.Model):
     record = models.ForeignKey(Record, on_delete=models.CASCADE, related_name='appointments')
+    administrator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, limit_choices_to={'profile__role': 'Administrador'}, related_name='admin_appointments')
     fecha = models.DateField()
     hora = models.TimeField()
     descripcion = models.TextField(blank=True)

@@ -84,6 +84,13 @@ class AppointmentForm(forms.ModelForm):
         label='',
         widget=forms.Select(attrs={'class': 'form-select'})
     )
+    administrator = forms.ModelChoiceField(
+        queryset=User.objects.filter(profile__role='Administrador'),
+        label='',
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        empty_label="Seleccione un Administrador"
+    )
     fecha = forms.DateField(
         label='',
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
@@ -100,4 +107,4 @@ class AppointmentForm(forms.ModelForm):
 
     class Meta:
         model = Appointment
-        fields = ('record', 'fecha', 'hora', 'descripcion')
+        fields = ('record', 'administrator', 'fecha', 'hora', 'descripcion')

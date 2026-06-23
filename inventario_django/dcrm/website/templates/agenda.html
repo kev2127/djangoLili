@@ -13,21 +13,33 @@
             <h5 class="card-title mb-3">Agendar Nueva Cita</h5>
             <form method="POST">
                 {% csrf_token %}
+                
+                {% if form.record.is_hidden %}
+                    {{ form.record }}
+                {% endif %}
+
                 <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Cliente / Registro</label>
+                    {% if not form.record.is_hidden %}
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Cliente / Registro</label>
                         {{ form.record }}
                     </div>
+                    {% endif %}
+
                     <div class="col-md-3">
-                        <label class="form-label">Fecha</label>
+                        <label class="form-label fw-bold">Administrador</label>
+                        {{ form.administrator }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Fecha</label>
                         {{ form.fecha }}
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Hora</label>
+                        <label class="form-label fw-bold">Hora</label>
                         {{ form.hora }}
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Descripción</label>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Descripción</label>
                         {{ form.descripcion }}
                     </div>
                 </div>
@@ -45,7 +57,11 @@
             <table class="table table-hover table-striped align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
+                        {% if role == 'Administrador' %}
                         <th>Paciente</th>
+                        {% else %}
+                        <th>Administrador</th>
+                        {% endif %}
                         <th>Fecha</th>
                         <th>Hora</th>
                         <th>Descripción</th>
@@ -55,7 +71,17 @@
                 <tbody>
                     {% for appt in appointments %}
                     <tr>
+                        {% if role == 'Administrador' %}
                         <td>{{ appt.record.first_name }} {{ appt.record.last_name }}</td>
+                        {% else %}
+                        <td>
+                            {% if appt.administrator %}
+                                {{ appt.administrator.first_name }} {{ appt.administrator.last_name }} ({{ appt.administrator.username }})
+                            {% else %}
+                                <span class="text-muted">No asignado</span>
+                            {% endif %}
+                        </td>
+                        {% endif %}
                         <td>{{ appt.fecha|date:"d/m/Y" }}</td>
                         <td>{{ appt.hora|time:"H:i" }}</td>
                         <td>{{ appt.descripcion }}</td>
