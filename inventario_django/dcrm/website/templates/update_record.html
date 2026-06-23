@@ -1,15 +1,29 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 <div class="col-md-6 offset-md-3">
     <h2>Actualizar Registro</h2>
-    <form method="POST">
+    <form method="POST" id="formActualizar">
         {% csrf_token %}
         {{ form.as_p }}
         <br />
-        <button type="submit" class="btn btn-primary">Actualizar Registro</button>
+        <button type="button" class="btn btn-primary" onclick="pedirConfirmacionActualizar()">
+            Actualizar Registro
+        </button>
         <a href="{% url 'home' %}" class="btn btn-secondary">Atrás</a>
     </form>
 </div>
+
+<script>
+    function pedirConfirmacionActualizar() {
+        confirmarFormulario('formActualizar', {
+            titulo: 'Actualizar registro',
+            mensaje: '¿Estás seguro de que deseas guardar los cambios?',
+            subMensaje: 'Los datos anteriores serán reemplazados.',
+            color: 'primary',
+            icono: 'pencil-square',
+            btnTexto: 'Sí, actualizar'
+        });
+    }
+</script>
 {% endblock %}

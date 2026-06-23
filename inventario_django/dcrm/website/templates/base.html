@@ -85,14 +85,13 @@
     </div>
 
     <script>
-        // Activa el modal en lugar del confirm() nativo
         function confirmarAccion(url, opciones = {}) {
             const {
                 titulo = 'Confirmar acción',
                 mensaje = '¿Estás seguro de continuar?',
                 subMensaje = 'Esta acción no se puede deshacer.',
-                color = 'danger',   // 'danger' | 'warning' | 'primary'
-                icono = 'trash',    // nombre de Bootstrap Icon
+                color = 'danger',
+                icono = 'trash',
                 btnTexto = 'Confirmar'
             } = opciones;
 
@@ -104,6 +103,33 @@
             document.getElementById('modalBtnConfirmar').textContent = btnTexto;
             document.getElementById('modalHeader').className = `modal-header text-white border-0 bg-${color}`;
             document.getElementById('modalIcono').className = `bi bi-${icono} fs-5`;
+
+            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
+        }
+
+        function confirmarFormulario(formId, opciones = {}) {
+            const {
+                titulo = 'Confirmar acción',
+                mensaje = '¿Estás seguro de continuar?',
+                subMensaje = 'Esta acción no se puede deshacer.',
+                color = 'primary',
+                icono = 'check-circle',
+                btnTexto = 'Confirmar'
+            } = opciones;
+
+            document.getElementById('modalConfirmarLabel').textContent = titulo;
+            document.getElementById('modalMensaje').textContent = mensaje;
+            document.getElementById('modalSubMensaje').textContent = subMensaje;
+            document.getElementById('modalHeader').className = `modal-header text-white border-0 bg-${color}`;
+            document.getElementById('modalIcono').className = `bi bi-${icono} fs-5`;
+
+            const btnConfirmar = document.getElementById('modalBtnConfirmar');
+            btnConfirmar.textContent = btnTexto;
+            btnConfirmar.className = `btn btn-${color}`;
+            btnConfirmar.removeAttribute('href');
+            btnConfirmar.onclick = function () {
+                document.getElementById(formId).submit();
+            };
 
             new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
         }
