@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<a href="{% url 'home' %}" class="btn btn-primary">Atrás</a>
-<a href="{% url 'delete_record' customer_record.id %}" class="btn btn-danger">Eliminar</a>
 <a href="{% url 'update_record' customer_record.id %}" class="btn btn-primary">Actualizar</a>
+<a href="{% url 'delete_record' customer_record.id %}" class="btn btn-danger">Eliminar</a>
+<a href="{% url 'home' %}" class="btn btn-dark">Atrás</a>
 {% endblock %}
