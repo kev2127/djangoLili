@@ -72,8 +72,14 @@ def customer_record(request, pk):
         return redirect('home')
 
 def delete_record(request, pk):
-    # Por ahora redirige a la página principal.
-    return redirect('home')
+    if request.user.is_authenticated:
+        delete_it = Record.objects.get(id=pk)
+        delete_it.delete()
+        messages.success(request, "Registro eliminado exitosamente")
+        return redirect('home')
+    else:
+        messages.error(request, "🚫 no estas autentidicado entonces no se puede hacer esta accion")
+        return redirect('home')
 
 def add_record(request):
     form = AddRecordForm(request.POST or None)
