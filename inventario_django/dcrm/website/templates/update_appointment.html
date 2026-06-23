@@ -6,7 +6,7 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <h2 class="mb-4">Actualizar Cita</h2>
-                <form method="POST">
+                <form method="POST" id="formActualizarCita">
                     {% csrf_token %}
 
                     {% if form.record.is_hidden %}
@@ -33,12 +33,13 @@
                             {{ form.hora }}
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">Descripción de la cita </label>
+                            <label class="form-label">Descripción de la cita</label>
                             {{ form.descripcion }}
                         </div>
                     </div>
                     <div class="mt-3 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Actualizar Cita</button>
+                        <button type="button" class="btn btn-primary" onclick="pedirConfirmacionCita()">Actualizar
+                            Cita</button>
                         <a href="{% url 'agenda' %}" class="btn btn-danger">Cancelar</a>
                     </div>
                 </form>
@@ -46,4 +47,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    function pedirConfirmacionCita() {
+        confirmarFormulario('formActualizarCita', {
+            titulo: 'Actualizar cita',
+            mensaje: '¿Estás seguro de que deseas guardar los cambios?',
+            subMensaje: 'Los datos de la cita serán actualizados.',
+            color: 'primary',
+            icono: 'calendar-check',
+            btnTexto: 'Sí, actualizar'
+        });
+    }
+</script>
 {% endblock %}
