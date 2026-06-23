@@ -10,29 +10,28 @@
 
 
         {% if user.is_authenticated %}
-          {% if user.profile.role == 'Administrador' %}
-            {% if request.resolver_match.url_name != 'add_record' %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'add_record' %}"><button type="button" class="btn btn-primary">➕ Agregar Registro</button></a>
-            </li>
-            {% endif %}
-            {% if request.resolver_match.url_name != 'agenda' %}
-            <li>
-              <a href="{% url 'agenda' %}" class="nav-link"> <button type="button" class="btn btn-primary">📅 Agenda</button></a>
-            </li>
-            {% endif %}
-            {% if request.resolver_match.url_name != 'home' %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'home' %}"> <button type="button" class="btn btn-primary">Lista de registros</button></a>
-            </li>
-            {% endif %}
-          {% endif %}
+        {% if user.profile.role == 'Administrador' %}
+        {% if request.resolver_match.url_name != 'agenda' %}
+        <li>
+          <a href="{% url 'agenda' %}" class="nav-link"> <button type="button" class="btn btn-primary">📅
+              Agenda</button></a>
+        </li>
+        {% endif %}
+        {% if request.resolver_match.url_name != 'home' %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}"> <button type="button" class="btn btn-primary">Lista de
+              registros</button></a>
+        </li>
+        {% endif %}
+        {% endif %}
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}"><button type="button" class="btn btn-primary">Inicio de sesion</button></a>
+          <a class="nav-link" href="{% url 'home' %}"><button type="button" class="btn btn-primary">Inicio de
+              sesion</button></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'register' %}"><button type="button" class="btn btn-primary">Registro</button></a>
+          <a class="nav-link" href="{% url 'register' %}"><button type="button"
+              class="btn btn-primary">Registro</button></a>
         </li>
         {% endif %}
 
